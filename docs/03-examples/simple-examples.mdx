@@ -5,6 +5,7 @@
 ## 1. Port Forwarding ساده
 
 ### HTTP Port Forward
+
 ```json
 {
   "name": "http_port_forward",
@@ -34,11 +35,13 @@
 ```
 
 **استفاده:**
+
 ```bash
 curl -x localhost:8080 http://httpforever.com
 ```
 
 ### Local Service Proxy
+
 ```json
 {
   "name": "local_service_proxy",
@@ -67,6 +70,7 @@ curl -x localhost:8080 http://httpforever.com
 ## 2. UDP Services
 
 ### DNS Proxy
+
 ```json
 {
   "name": "dns_proxy",
@@ -84,6 +88,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### Game Server Proxy
+
 ```json
 {
   "name": "game_server_proxy",
@@ -120,6 +125,7 @@ curl -x localhost:8080 http://httpforever.com
 ## 3. Basic TLS
 
 ### TLS Termination
+
 ```json
 {
   "name": "tls_termination",
@@ -155,6 +161,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### TLS Client
+
 ```json
 {
   "name": "tls_client",
@@ -192,6 +199,7 @@ curl -x localhost:8080 http://httpforever.com
 ## 4. Load Balancing ساده
 
 ### Round Robin
+
 ```json
 {
   "name": "simple_load_balancer",
@@ -239,6 +247,7 @@ curl -x localhost:8080 http://httpforever.com
 ## 5. Basic VPN
 
 ### Simple TUN Interface
+
 ```json
 {
   "name": "simple_vpn",
@@ -267,6 +276,7 @@ curl -x localhost:8080 http://httpforever.com
 ## Core Configuration Examples
 
 ### Development Setup
+
 ```json
 {
   "log": {
@@ -291,6 +301,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### Production Setup
+
 ```json
 {
   "log": {
@@ -310,16 +321,14 @@ curl -x localhost:8080 http://httpforever.com
     "workers": 0,
     "ram-profile": "server"
   },
-  "configs": [
-    "load_balancer.json",
-    "tls_proxy.json"
-  ]
+  "configs": ["load_balancer.json", "tls_proxy.json"]
 }
 ```
 
 ## Testing Commands
 
 ### HTTP Proxy Test
+
 ```bash
 # Test simple proxy
 curl -x localhost:8080 http://httpforever.com
@@ -329,6 +338,7 @@ curl -H "Host: example.com" -x localhost:8080 http://httpforever.com
 ```
 
 ### HTTPS Test
+
 ```bash
 # Test TLS connection
 openssl s_client -connect localhost:443 -servername example.com
@@ -338,6 +348,7 @@ curl -k https://localhost:443
 ```
 
 ### Performance Test
+
 ```bash
 # Simple benchmark
 ab -n 1000 -c 10 http://localhost:8080/
@@ -351,6 +362,7 @@ wrk -t12 -c400 -d30s http://localhost:8080/
 ### Common Issues
 
 #### Port Already in Use
+
 ```bash
 # Check what's using the port
 netstat -tuln | grep :8080
@@ -361,6 +373,7 @@ sudo kill -9 <PID>
 ```
 
 #### Permission Denied
+
 ```bash
 # Run with sudo for ports < 1024
 sudo waterwall core.json
@@ -369,6 +382,7 @@ sudo waterwall core.json
 ```
 
 #### Connection Refused
+
 ```bash
 # Check if target server is accessible
 telnet target.server.com 80
@@ -378,18 +392,21 @@ nc -zv target.server.com 80
 ## Best Practices
 
 ### Configuration
+
 1. **Start Simple**: شروع با پیکربندی‌های ساده
 2. **Test Incrementally**: تست مرحله‌ای
 3. **Use Descriptive Names**: نام‌های توصیفی برای گره‌ها
 4. **Enable Logging**: فعال‌سازی logging مناسب
 
 ### Security
+
 1. **Limit Access**: محدود کردن دسترسی با whitelist
 2. **Use TLS**: استفاده از TLS برای امنیت
 3. **Regular Updates**: به‌روزرسانی منظم
 4. **Monitor Logs**: نظارت بر logs
 
 ### Performance
+
 1. **Tune Workers**: تنظیم تعداد workers
 2. **Optimize RAM**: انتخاب ram-profile مناسب
 3. **Use nodelay**: فعال‌سازی TCP nodelay
@@ -401,8 +418,6 @@ nc -zv target.server.com 80
 
 1. **Medium Examples**: [پیکربندی‌های متوسط](configuration-examples#متوسط-medium)
 2. **Advanced Patterns**: [الگوهای پیشرفته](advanced-patterns)
-3. **Node Reference**: [مرجع کامل گره‌ها](../04-reference/)
-4. **Production Deployment**: [راهنمای استقرار](../05-guides/deployment)
 
 ## واژه‌نامه
 

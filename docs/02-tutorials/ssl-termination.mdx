@@ -22,6 +22,7 @@ sidebar_position: 2
 - ⚡ **عملکرد بهتر**: کاهش CPU load در سرورهای backend
 
 ### مزایای WaterWall SSL Termination:
+
 - 🏃 **سرعت بالا**: بهتر از nginx در برخی scenarios
 - 🛠️ **انعطاف**: پیکربندی قدرتمند
 - 🔄 **مقیاس‌پذیری**: پشتیبانی از connection pooling
@@ -30,12 +31,15 @@ sidebar_position: 2
 ## پیش‌نیازها 📋
 
 ### 1. دامنه
+
 شما نیاز به یک دامنه دارید:
+
 - دامنه‌های `.ir` ارزان و مناسب هستند
 - دامنه‌های رایگان مانند `.tk`, `.ml` نیز کار می‌کنند
 - یا از زیردامنه CloudFlare استفاده کنید
 
 ### 2. گواهی SSL
+
 ```bash
 # نصب certbot
 sudo apt update
@@ -53,6 +57,7 @@ ls -la /etc/letsencrypt/live/your-domain.com/
 ```
 
 ### 3. تنظیم سرور
+
 ```bash
 # ایجاد پوشه‌های مورد نیاز
 mkdir -p ~/waterwall-ssl/{configs,logs,ssl}
@@ -67,17 +72,19 @@ sudo chown $USER:$USER ssl/*.pem
 ## نوع 1: SSL Termination ساده ⭐
 
 ### نمودار
+
 ```mermaid
 graph LR
     A[👤 کاربر<br/>HTTPS] --> B[🔒 WaterWall<br/>SSL Termination]
     B --> C[🖥️ Backend<br/>HTTP]
-    
+
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#e8f5e8
 ```
 
 ### پیکربندی
+
 ```json title="configs/ssl-termination.json"
 {
   "name": "ssl_termination_proxy",
@@ -99,11 +106,11 @@ graph LR
       "name": "ssl_terminator",
       "type": "OpenSSLServer",
       "settings": {
-        "cert-file": "ssl/fullchain.pem",     // مسیر گواهی
-        "key-file": "ssl/privkey.pem",       // مسیر کلید خصوصی
-        "alpns": ["http/1.1"],               // پروتکل‌های پشتیبانی‌شده
-        "session-ticket": true,              // بهبود performance
-        "session-timeout": 3600              // timeout session
+        "cert-file": "ssl/fullchain.pem", // مسیر گواهی
+        "key-file": "ssl/privkey.pem", // مسیر کلید خصوصی
+        "alpns": ["http/1.1"], // پروتکل‌های پشتیبانی‌شده
+        "session-ticket": true, // بهبود performance
+        "session-timeout": 3600 // timeout session
       },
       "next": "backend_connector"
     },
@@ -111,10 +118,10 @@ graph LR
       "name": "backend_connector",
       "type": "TcpConnector",
       "settings": {
-        "address": "127.0.0.1",             // سرور backend
-        "port": 8080,                       // پورت HTTP backend
+        "address": "127.0.0.1", // سرور backend
+        "port": 8080, // پورت HTTP backend
         "nodelay": true,
-        "pool-size": 10                     // connection pool
+        "pool-size": 10 // connection pool
       }
     }
   ]
@@ -122,6 +129,7 @@ graph LR
 ```
 
 ### تست
+
 ```bash
 # اجرای WaterWall
 waterwall core.json
@@ -138,18 +146,20 @@ openssl s_client -connect your-domain.com:443 -servername your-domain.com
 
 ## نوع 2: SSL Termination با HTTP/2 🚀
 
-### نمودار  
+### نمودار
+
 ```mermaid
 graph LR
     A[👤 کاربر<br/>HTTP/2] --> B[🔒 WaterWall<br/>SSL + HTTP/2]
     B --> C[🖥️ Backend<br/>HTTP/1.1]
-    
+
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#e8f5e8
 ```
 
 ### پیکربندی
+
 ```json title="configs/ssl-http2-termination.json"
 {
   "name": "ssl_http2_termination",
@@ -175,8 +185,8 @@ graph LR
         "cert-file": "ssl/fullchain.pem",
         "key-file": "ssl/privkey.pem",
         "alpns": [
-          "h2",                              // HTTP/2 اولویت اول
-          "http/1.1"                         // HTTP/1.1 fallback
+          "h2", // HTTP/2 اولویت اول
+          "http/1.1" // HTTP/1.1 fallback
         ],
         "session-ticket": true,
         "session-timeout": 7200,
@@ -213,6 +223,7 @@ graph LR
 چندین backend را پشت SSL load balance کنید!
 
 ### نمودار
+
 ```mermaid
 graph LR
     A[👤 کاربر<br/>HTTPS] --> B[🔒 SSL Termination]
@@ -222,6 +233,7 @@ graph LR
 ```
 
 ### پیکربندی
+
 ```json title="configs/ssl-load-balancer.json"
 {
   "name": "ssl_load_balancer",
@@ -259,7 +271,7 @@ graph LR
       }
     },
     {
-      "name": "load_balancer_2", 
+      "name": "load_balancer_2",
       "type": "TcpConnector",
       "settings": {
         "address": "backend2.local",
@@ -270,7 +282,7 @@ graph LR
     },
     {
       "name": "load_balancer_3",
-      "type": "TcpConnector", 
+      "type": "TcpConnector",
       "settings": {
         "address": "backend3.local",
         "port": 8080,
@@ -287,6 +299,7 @@ graph LR
 فقط IP های مجاز دسترسی داشته باشند!
 
 ### پیکربندی
+
 ```json title="configs/ssl-secure-termination.json"
 {
   "name": "ssl_secure_termination",
@@ -300,12 +313,14 @@ graph LR
         "address": "0.0.0.0",
         "port": 443,
         "nodelay": true,
-        "whitelist": [                       // فقط این IP ها
-          "192.168.1.0/24",                 // شبکه محلی
-          "10.0.0.0/8",                     // شبکه داخلی
-          "1.2.3.4/32"                      // IP مخصوص
+        "whitelist": [
+          // فقط این IP ها
+          "192.168.1.0/24", // شبکه محلی
+          "10.0.0.0/8", // شبکه داخلی
+          "1.2.3.4/32" // IP مخصوص
         ],
-        "blacklist": [                       // این IP ها ممنوع
+        "blacklist": [
+          // این IP ها ممنوع
           "5.6.7.8/32"
         ]
       },
@@ -318,7 +333,7 @@ graph LR
         "cert-file": "ssl/fullchain.pem",
         "key-file": "ssl/privkey.pem",
         "alpns": ["http/1.1"],
-        "verify-client": true,               // اعتبارسنجی کلاینت
+        "verify-client": true, // اعتبارسنجی کلاینت
         "client-ca-file": "ssl/client-ca.pem"
       },
       "next": "backend_connector"
@@ -328,7 +343,7 @@ graph LR
       "type": "TcpConnector",
       "settings": {
         "address": "secure-backend.local",
-        "port": 8443,                        // Backend هم HTTPS
+        "port": 8443, // Backend هم HTTPS
         "nodelay": true
       }
     }
@@ -339,6 +354,7 @@ graph LR
 ## تنظیمات پیشرفته ⚙️
 
 ### بهینه‌سازی SSL Performance
+
 ```json
 {
   "name": "optimized_ssl_server",
@@ -347,17 +363,17 @@ graph LR
     "cert-file": "ssl/fullchain.pem",
     "key-file": "ssl/privkey.pem",
     "alpns": ["h2", "http/1.1"],
-    
+
     // Performance optimizations
-    "session-ticket": true,                  // کش session ها
-    "session-timeout": 7200,                 // نگهداری طولانی‌تر
-    "session-cache-size": 20480,             // حافظه کش بیشتر
-    
+    "session-ticket": true, // کش session ها
+    "session-timeout": 7200, // نگهداری طولانی‌تر
+    "session-cache-size": 20480, // حافظه کش بیشتر
+
     // Security settings
     "cipher-suites": "TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256",
-    "min-version": "TLSv1.2",                // حداقل نسخه TLS
-    "max-version": "TLSv1.3",                // حداکثر نسخه TLS
-    
+    "min-version": "TLSv1.2", // حداقل نسخه TLS
+    "max-version": "TLSv1.3", // حداکثر نسخه TLS
+
     // Connection settings
     "tcp-nodelay": true,
     "tcp-fastopen": true,
@@ -367,6 +383,7 @@ graph LR
 ```
 
 ### Multi-Domain SSL (SNI)
+
 ```json
 {
   "name": "multi_domain_ssl",
@@ -378,7 +395,7 @@ graph LR
         "key-file": "ssl/domain1-privkey.pem"
       },
       "domain2.com": {
-        "cert-file": "ssl/domain2-fullchain.pem", 
+        "cert-file": "ssl/domain2-fullchain.pem",
         "key-file": "ssl/domain2-privkey.pem"
       }
     },
@@ -390,6 +407,7 @@ graph LR
 ## مدیریت گواهی‌ها 📜
 
 ### تمدید خودکار Let's Encrypt
+
 ```bash
 #!/bin/bash
 # ssl-renew.sh
@@ -415,6 +433,7 @@ echo "✅ گواهی تمدید شد و WaterWall ریستارت شد"
 ```
 
 ### Crontab برای تمدید خودکار
+
 ```bash
 # اضافه کردن به crontab
 crontab -e
@@ -427,6 +446,7 @@ crontab -e
 ```
 
 ### ایجاد Self-Signed Certificate (برای تست)
+
 ```bash
 #!/bin/bash
 # create-self-signed.sh
@@ -449,6 +469,7 @@ echo "✅ گواهی self-signed برای $DOMAIN ایجاد شد"
 ## نظارت و عیب‌یابی 🔧
 
 ### بررسی وضعیت SSL
+
 ```bash
 # تست اتصال SSL
 openssl s_client -connect your-domain.com:443 -servername your-domain.com
@@ -466,10 +487,13 @@ curl -I --http2 https://your-domain.com
 ### مشکلات رایج
 
 #### ❌ گواهی نامعتبر
+
 ```
 Error: certificate verify failed
 ```
+
 **حل**:
+
 ```bash
 # بررسی مسیر فایل‌ها
 ls -la ssl/
@@ -482,10 +506,13 @@ openssl x509 -in ssl/fullchain.pem -text -noout | grep -A1 "Subject Alternative 
 ```
 
 #### ❌ کلید خصوصی رمزدار
+
 ```
 Error: private key requires passphrase
 ```
+
 **حل**:
+
 ```bash
 # حذف رمز از کلید خصوصی
 openssl rsa -in ssl/privkey.pem -out ssl/privkey-nopass.pem
@@ -494,10 +521,13 @@ openssl rsa -in ssl/privkey.pem -out ssl/privkey-nopass.pem
 ```
 
 #### ❌ دسترسی به فایل‌ها
+
 ```
 Error: permission denied reading ssl files
 ```
+
 **حل**:
+
 ```bash
 # تنظیم مجوزها
 sudo chown $USER:$USER ssl/*.pem
@@ -609,6 +639,7 @@ echo "🧪 تست: curl -I https://$DOMAIN"
 ## خلاصه 📋
 
 ### چک‌لیست SSL Termination
+
 - [ ] دامنه تنظیم شده و به سرور اشاره می‌کند
 - [ ] گواهی SSL دریافت شده
 - [ ] فایل‌های SSL در مسیر صحیح قرار دارند
@@ -617,6 +648,7 @@ echo "🧪 تست: curl -I https://$DOMAIN"
 - [ ] تست HTTPS موفق است
 
 ### نکات طلایی
+
 ```
 session-ticket = true = Performance بهتر
 HTTP/2 = سرعت بالاتر
@@ -624,15 +656,6 @@ Connection pooling = کاهش latency
 Auto renewal = بدون وقفه
 ```
 
-## مراحل بعدی 🎯
-
-حالا که SSL Termination را تسلط دارید:
-
-1. **[Load Balancing](load-balancing)** - چندین backend را متعادل کنید
-2. **[Advanced Tunnels](advanced-tunnels/)** - تونل‌های پیچیده‌تر بسازید
-3. **[Security Guide](../05-guides/security)** - امنیت را تقویت کنید
-4. **[Performance Guide](../05-guides/performance)** - عملکرد را بهینه کنید
-
 **عالی! حالا سرور شما SSL Termination دارد** 🔒✨
 
-*"امنیت بدون پیچیدگی، قدرت واقعی است!"* 💪
+_"امنیت بدون پیچیدگی، قدرت واقعی است!"_ 💪

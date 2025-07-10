@@ -15,8 +15,9 @@ sidebar_position: 1
 ```
 
 مزایا:
+
 - 🔄 **هدایت ترافیک**: پورت‌ها را به سرورهای مختلف هدایت کنید
-- 🏃 **سرعت بالا**: عملکرد بهتر از iptables در برخی موارد  
+- 🏃 **سرعت بالا**: عملکرد بهتر از iptables در برخی موارد
 - 🛠️ **انعطاف**: پیکربندی ساده و قدرتمند
 - 📊 **نظارت**: کنترل و مانیتورینگ ترافیک
 
@@ -25,17 +26,19 @@ sidebar_position: 1
 ساده‌ترین حالت - یک پورت به یک پورت!
 
 ### نمودار
+
 ```mermaid
 graph LR
     A[👤 کاربر<br/>پورت 8080] --> B[🖥️ سرور شما<br/>WaterWall]
     B --> C[🌐 سرور مقصد<br/>httpforever.com:80]
-    
+
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#e8f5e8
 ```
 
 ### پیکربندی
+
 ```json title="configs/simple-proxy.json"
 {
   "name": "simple_port_proxy",
@@ -46,19 +49,19 @@ graph LR
       "name": "http_listener",
       "type": "TcpListener",
       "settings": {
-        "address": "0.0.0.0",         // گوش به همه IP ها
-        "port": 8080,                 // پورت ورودی
-        "nodelay": true               // کاهش تأخیر
+        "address": "0.0.0.0", // گوش به همه IP ها
+        "port": 8080, // پورت ورودی
+        "nodelay": true // کاهش تأخیر
       },
       "next": "http_connector"
     },
     {
-      "name": "http_connector", 
+      "name": "http_connector",
       "type": "TcpConnector",
       "settings": {
         "address": "httpforever.com", // سرور مقصد
-        "port": 80,                   // پورت مقصد
-        "nodelay": true               // کاهش تأخیر
+        "port": 80, // پورت مقصد
+        "nodelay": true // کاهش تأخیر
       }
       // گره آخر next ندارد
     }
@@ -67,6 +70,7 @@ graph LR
 ```
 
 ### تست
+
 ```bash
 # اجرای WaterWall
 waterwall core.json
@@ -82,17 +86,19 @@ curl -x localhost:8080 http://httpforever.com
 هر پورتی که وصل شوید، به یک مقصد می‌رود!
 
 ### نمودار
+
 ```mermaid
 graph LR
     A1[👤 کاربر 1<br/>پورت 8080] --> B[🖥️ سرور شما]
     A2[👤 کاربر 2<br/>پورت 8081] --> B
     A3[👤 کاربر 3<br/>پورت 8082] --> B
     A4[👤 کاربر ...<br/>پورت ...] --> B
-    
+
     B --> C[🌐 یک مقصد<br/>httpforever.com:80]
 ```
 
 ### پیکربندی
+
 ```json title="configs/multi-to-single.json"
 {
   "name": "multiport_to_single",
@@ -104,17 +110,17 @@ graph LR
       "type": "TcpListener",
       "settings": {
         "address": "0.0.0.0",
-        "port": [8080, 8090],         // محدوده پورت: 8080 تا 8090
+        "port": [8080, 8090], // محدوده پورت: 8080 تا 8090
         "nodelay": true
       },
       "next": "single_connector"
     },
     {
       "name": "single_connector",
-      "type": "TcpConnector", 
+      "type": "TcpConnector",
       "settings": {
         "address": "httpforever.com",
-        "port": 80,                   // همه به پورت 80 می‌روند
+        "port": 80, // همه به پورت 80 می‌روند
         "nodelay": true
       }
     }
@@ -123,10 +129,11 @@ graph LR
 ```
 
 ### تست
+
 ```bash
 # تست پورت‌های مختلف
 curl -x localhost:8080 http://httpforever.com
-curl -x localhost:8081 http://httpforever.com  
+curl -x localhost:8081 http://httpforever.com
 curl -x localhost:8082 http://httpforever.com
 
 # همه باید جواب یکسانی بدهند
@@ -137,19 +144,21 @@ curl -x localhost:8082 http://httpforever.com
 هر پورت به همان پورت در مقصد می‌رود!
 
 ### نمودار
+
 ```mermaid
 graph LR
     A1[👤 پورت 443] --> B[🖥️ WaterWall] --> C1[🌐 مقصد:443]
-    A2[👤 پورت 80] --> B --> C2[🌐 مقصد:80]  
+    A2[👤 پورت 80] --> B --> C2[🌐 مقصد:80]
     A3[👤 پورت 8080] --> B --> C3[🌐 مقصد:8080]
     A4[👤 پورت 2083] --> B --> C4[🌐 مقصد:2083]
 ```
 
 ### پیکربندی
+
 ```json title="configs/multi-to-multi.json"
 {
   "name": "multiport_to_multiport",
-  "author": "شما", 
+  "author": "شما",
   "config-version": 1,
   "nodes": [
     {
@@ -157,7 +166,7 @@ graph LR
       "type": "TcpListener",
       "settings": {
         "address": "0.0.0.0",
-        "port": [80, 8080],           // محدوده: 80 تا 8080
+        "port": [80, 8080], // محدوده: 80 تا 8080
         "nodelay": true
       },
       "next": "dynamic_connector"
@@ -167,7 +176,7 @@ graph LR
       "type": "TcpConnector",
       "settings": {
         "address": "target.example.com",
-        "port": "src_context->port",  // استفاده از همان پورت ورودی
+        "port": "src_context->port", // استفاده از همان پورت ورودی
         "nodelay": true
       }
     }
@@ -176,13 +185,14 @@ graph LR
 ```
 
 ### مثال کاربردی
+
 ```bash
 # کاربر به پورت 443 وصل می‌شود
 curl -x localhost:443 https://example.com
 
 # WaterWall آن را به target.example.com:443 هدایت می‌کند
 
-# کاربر به پورت 80 وصل می‌شود  
+# کاربر به پورت 80 وصل می‌شود
 curl -x localhost:80 http://example.com
 
 # WaterWall آن را به target.example.com:80 هدایت می‌کند
@@ -193,6 +203,7 @@ curl -x localhost:80 http://example.com
 هر پورت به مقصد مخصوص خودش می‌رود!
 
 ### نمودار
+
 ```mermaid
 graph LR
     A1[👤 پورت 443] --> B1[🖥️ WaterWall 1] --> C1[🌐 سرور A:443]
@@ -201,6 +212,7 @@ graph LR
 ```
 
 ### پیکربندی
+
 ```json title="configs/multiple-separate.json"
 {
   "name": "multiple_separate_ports",
@@ -218,7 +230,7 @@ graph LR
       "next": "https_connector"
     },
     {
-      "name": "https_connector", 
+      "name": "https_connector",
       "type": "TcpConnector",
       "settings": {
         "address": "secure.example.com",
@@ -228,11 +240,11 @@ graph LR
     },
     {
       "name": "alt_listener",
-      "type": "TcpListener", 
+      "type": "TcpListener",
       "settings": {
         "address": "0.0.0.0",
         "port": 2083,
-        "nodelay": true  
+        "nodelay": true
       },
       "next": "alt_connector"
     },
@@ -252,6 +264,7 @@ graph LR
 ## پیکربندی پیشرفته ⚡
 
 ### Connection Pooling
+
 ```json
 {
   "name": "pooled_connector",
@@ -259,14 +272,15 @@ graph LR
   "settings": {
     "address": "target.com",
     "port": 80,
-    "pool-size": 10,                  // 10 اتصال پیش‌ساخته
-    "pool-idle-timeout": 300,         // timeout 5 دقیقه
+    "pool-size": 10, // 10 اتصال پیش‌ساخته
+    "pool-idle-timeout": 300, // timeout 5 دقیقه
     "nodelay": true
   }
 }
 ```
 
-### بهبود Performance  
+### بهبود Performance
+
 ```json
 {
   "name": "optimized_listener",
@@ -274,26 +288,29 @@ graph LR
   "settings": {
     "address": "0.0.0.0",
     "port": 8080,
-    "nodelay": true,                  // کاهش latency
-    "fastopen": true,                 // TCP Fast Open  
-    "reuseport": true                 // استفاده مجدد پورت
+    "nodelay": true, // کاهش latency
+    "fastopen": true, // TCP Fast Open
+    "reuseport": true // استفاده مجدد پورت
   }
 }
 ```
 
 ### Whitelist/Blacklist
+
 ```json
 {
   "name": "secure_listener",
   "type": "TcpListener",
   "settings": {
-    "address": "0.0.0.0", 
+    "address": "0.0.0.0",
     "port": 443,
-    "whitelist": [                    // فقط این IP ها
+    "whitelist": [
+      // فقط این IP ها
       "192.168.1.0/24",
       "10.0.0.1/32"
     ],
-    "blacklist": [                    // این IP ها ممنوع
+    "blacklist": [
+      // این IP ها ممنوع
       "1.2.3.4/32"
     ]
   }
@@ -303,6 +320,7 @@ graph LR
 ## اسکریپت‌های کمکی 🤖
 
 ### تولید خودکار پراکسی
+
 ```bash
 #!/bin/bash
 # generate-simple-proxy.sh
@@ -315,7 +333,7 @@ cat > configs/proxy-${LISTEN_PORT}.json << EOF
 {
   "name": "auto_proxy_${LISTEN_PORT}",
   "author": "اسکریپت خودکار",
-  "config-version": 1, 
+  "config-version": 1,
   "nodes": [
     {
       "name": "listener_${LISTEN_PORT}",
@@ -346,6 +364,7 @@ echo "🧪 تست: curl -x localhost:${LISTEN_PORT} http://${TARGET_HOST}"
 ```
 
 ### استفاده از اسکریپت
+
 ```bash
 # پراکسی ساده
 ./generate-simple-proxy.sh 8080 google.com 80
@@ -360,6 +379,7 @@ echo "🧪 تست: curl -x localhost:${LISTEN_PORT} http://${TARGET_HOST}"
 ## تست و عیب‌یابی 🔧
 
 ### تست‌های مختلف
+
 ```bash
 # تست اتصال ساده
 nc -zv localhost 8080
@@ -378,6 +398,7 @@ curl -H "X-Test: WaterWall" -x localhost:8080 http://httpforever.com
 ```
 
 ### نظارت
+
 ```bash
 # مشاهده logs
 tail -f logs/core.log
@@ -395,10 +416,13 @@ iftop -i any -P
 ### مشکلات رایج
 
 #### ❌ پورت در حال استفاده
+
 ```
 Error: bind failed: Address already in use
 ```
+
 **حل**:
+
 ```bash
 # پیدا کردن process
 sudo lsof -i :8080
@@ -411,10 +435,13 @@ sed -i 's/8080/9090/g' configs/proxy.json
 ```
 
 #### ❌ اتصال رد شد
+
 ```
 Error: Connection refused
 ```
+
 **حل**:
+
 ```bash
 # بررسی دسترسی شبکه
 ping target.example.com
@@ -427,10 +454,13 @@ sudo ufw status
 ```
 
 #### ❌ JSON نامعتبر
+
 ```
 Error: invalid JSON syntax
 ```
+
 **حل**:
+
 ```bash
 # بررسی syntax
 python3 -m json.tool configs/proxy.json
@@ -442,64 +472,67 @@ python3 -m json.tool configs/proxy.json
 ## مثال‌های کاربردی 💼
 
 ### 1. پراکسی وب
+
 ```json
 {
   "name": "web_proxy",
   "nodes": [
     {
       "name": "web_listener",
-      "type": "TcpListener", 
-      "settings": {"address": "0.0.0.0", "port": 8080},
+      "type": "TcpListener",
+      "settings": { "address": "0.0.0.0", "port": 8080 },
       "next": "web_connector"
     },
     {
       "name": "web_connector",
       "type": "TcpConnector",
-      "settings": {"address": "nginx.local", "port": 80}
+      "settings": { "address": "nginx.local", "port": 80 }
     }
   ]
 }
 ```
 
 ### 2. پراکسی API
+
 ```json
 {
-  "name": "api_proxy", 
+  "name": "api_proxy",
   "nodes": [
     {
       "name": "api_listener",
       "type": "TcpListener",
-      "settings": {"address": "0.0.0.0", "port": 3000},
+      "settings": { "address": "0.0.0.0", "port": 3000 },
       "next": "api_connector"
     },
     {
-      "name": "api_connector", 
+      "name": "api_connector",
       "type": "TcpConnector",
-      "settings": {"address": "api.backend.com", "port": 8080}
+      "settings": { "address": "api.backend.com", "port": 8080 }
     }
   ]
 }
 ```
 
 ### 3. پراکسی دیتابیس
+
 ```json
 {
   "name": "db_proxy",
   "nodes": [
     {
-      "name": "db_listener", 
+      "name": "db_listener",
       "type": "TcpListener",
       "settings": {
-        "address": "0.0.0.0", 
+        "address": "0.0.0.0",
         "port": 5432,
-        "whitelist": ["192.168.1.0/24"]  // فقط شبکه محلی
+        "whitelist": ["192.168.1.0/24"] // فقط شبکه محلی
       },
       "next": "db_connector"
     },
     {
       "name": "db_connector",
-      "type": "TcpConnector", 
-      "settings": {"address": "postgres.internal", "port": 5432}
+      "type": "TcpConnector",
+      "settings": { "address": "postgres.internal", "port": 5432 }
     }
   ]
 }
@@ -508,16 +541,18 @@ python3 -m json.tool configs/proxy.json
 ## خلاصه 📋
 
 ### چک‌لیست موفقیت
+
 - [ ] WaterWall نصب شده
 - [ ] فایل core.json تنظیم شده
 - [ ] پیکربندی پراکسی ساخته شده
-- [ ] تست‌ها موفق هستند  
+- [ ] تست‌ها موفق هستند
 - [ ] Logs خطایی ندارند
 
 ### نکات طلایی
+
 ```
 ساده شروع کنید = کمتر خطا
-nodelay = true = سرعت بهتر  
+nodelay = true = سرعت بهتر
 Pool اتصالات = عملکرد بالا
 Logs = دوست شما
 ```
@@ -527,10 +562,8 @@ Logs = دوست شما
 حالا که پراکسی ساده را یاد گرفتید:
 
 1. **[SSL Termination](ssl-termination)** - امنیت اضافه کنید
-2. **[Load Balancing](load-balancing)** - قدرت را افزایش دهید  
-3. **[Advanced Tunnels](advanced-tunnels/)** - تونل‌های پیشرفته بسازید
-4. **[مرجع گره‌ها](../04-reference/)** - تمام امکانات را بشناسید
+2. **[Load Balancing](load-balancing)** - قدرت را افزایش دهید
 
 **تبریک! شما اولین پراکسی‌تان را ساختید** 🎉
 
-*"بهترین پراکسی، پراکسی‌ای است که کار کند!"* 💪
+_"بهترین پراکسی، پراکسی‌ای است که کار کند!"_ 💪

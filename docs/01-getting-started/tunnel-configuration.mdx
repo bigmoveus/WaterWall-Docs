@@ -15,60 +15,66 @@ sidebar_position: 5
 ```
 
 هر تونل از **گره‌ها** (nodes) تشکیل شده که مثل کارگران مختلف هستند:
+
 - گوش‌دهنده (Listener) = نگهبان ورودی
-- رمزگذار (SSL/TLS) = قفل‌ساز  
+- رمزگذار (SSL/TLS) = قفل‌ساز
 - متصل‌کننده (Connector) = پیک
 
 ## ساختار فایل JSON 📝
 
 ### فرمت پایه
+
 ```json
 {
-  "name": "نام_تونل",                    // نام تونل
-  "author": "سازنده",                  // سازنده 
-  "config-version": 1,                 // نسخه پیکربندی
-  "nodes": [                           // لیست گره‌ها
+  "name": "نام_تونل", // نام تونل
+  "author": "سازنده", // سازنده
+  "config-version": 1, // نسخه پیکربندی
+  "nodes": [
+    // لیست گره‌ها
     // گره‌ها اینجا
   ]
 }
 ```
 
 ### ساختار گره
+
 ```json
 {
-  "name": "نام_گره",                    // نام منحصربه‌فرد
-  "type": "نوع_گره",                   // نوع گره (مثل TcpListener)
-  "settings": {                        // تنظیمات گره
+  "name": "نام_گره", // نام منحصربه‌فرد
+  "type": "نوع_گره", // نوع گره (مثل TcpListener)
+  "settings": {
+    // تنظیمات گره
     // تنظیمات مخصوص هر گره
   },
-  "next": "گره_بعدی"                   // نام گره بعدی در زنجیره
+  "next": "گره_بعدی" // نام گره بعدی در زنجیره
 }
 ```
 
 ## مثال‌های عملی 🎯
 
 ### 1. پراکسی HTTP ساده
+
 ```json
 {
   "name": "simple_http_proxy",
-  "author": "شما", 
+  "author": "شما",
   "config-version": 1,
   "nodes": [
     {
       "name": "http_listener",
       "type": "TcpListener",
       "settings": {
-        "address": "0.0.0.0",            // گوش به همه IP ها
-        "port": 8080                     // پورت 8080
+        "address": "0.0.0.0", // گوش به همه IP ها
+        "port": 8080 // پورت 8080
       },
       "next": "http_connector"
     },
     {
       "name": "http_connector",
-      "type": "TcpConnector", 
+      "type": "TcpConnector",
       "settings": {
-        "address": "httpforever.com",    // سرور مقصد
-        "port": 80                       // پورت HTTP
+        "address": "httpforever.com", // سرور مقصد
+        "port": 80 // پورت HTTP
       }
       // گره آخر next ندارد
     }
@@ -77,11 +83,13 @@ sidebar_position: 5
 ```
 
 **تست:**
+
 ```bash
 curl -x localhost:8080 http://httpforever.com
 ```
 
 ### 2. پراکسی HTTPS با SSL Termination
+
 ```json
 {
   "name": "https_ssl_proxy",
@@ -99,11 +107,11 @@ curl -x localhost:8080 http://httpforever.com
     },
     {
       "name": "ssl_terminator",
-      "type": "OpenSSLServer",           // پایان SSL اینجا
+      "type": "OpenSSLServer", // پایان SSL اینجا
       "settings": {
-        "cert-file": "ssl/cert.pem",     // فایل گواهی
-        "key-file": "ssl/key.pem",       // فایل کلید
-        "alpns": ["http/1.1"]            // پروتکل‌های پشتیبانی‌شده
+        "cert-file": "ssl/cert.pem", // فایل گواهی
+        "key-file": "ssl/key.pem", // فایل کلید
+        "alpns": ["http/1.1"] // پروتکل‌های پشتیبانی‌شده
       },
       "next": "backend_connector"
     },
@@ -111,15 +119,16 @@ curl -x localhost:8080 http://httpforever.com
       "name": "backend_connector",
       "type": "TcpConnector",
       "settings": {
-        "address": "192.168.1.100",      // سرور داخلی
-        "port": 80                       // HTTP ساده
+        "address": "192.168.1.100", // سرور داخلی
+        "port": 80 // HTTP ساده
       }
     }
   ]
 }
 ```
 
-### 3. Load Balancer 
+### 3. Load Balancer
+
 ```json
 {
   "name": "web_load_balancer",
@@ -132,17 +141,17 @@ curl -x localhost:8080 http://httpforever.com
       "settings": {
         "address": "0.0.0.0",
         "port": 80,
-        "balance-group": "web_servers"   // گروه تعادل بار
+        "balance-group": "web_servers" // گروه تعادل بار
       },
       "next": "backend_1"
     },
     {
-      "name": "web_listener_2", 
+      "name": "web_listener_2",
       "type": "TcpListener",
       "settings": {
         "address": "0.0.0.0",
         "port": 8080,
-        "balance-group": "web_servers"   // همان گروه
+        "balance-group": "web_servers" // همان گروه
       },
       "next": "backend_2"
     },
@@ -156,7 +165,7 @@ curl -x localhost:8080 http://httpforever.com
     },
     {
       "name": "backend_2",
-      "type": "TcpConnector", 
+      "type": "TcpConnector",
       "settings": {
         "address": "web2.internal.com",
         "port": 80
@@ -167,6 +176,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### 4. تونل HTTP/2 پیشرفته
+
 ```json
 {
   "name": "http2_tunnel",
@@ -187,8 +197,8 @@ curl -x localhost:8080 http://httpforever.com
       "type": "OpenSSLServer",
       "settings": {
         "cert-file": "ssl/cert.pem",
-        "key-file": "ssl/key.pem", 
-        "alpns": ["h2", "http/1.1"]      // HTTP/2 اولویت دارد
+        "key-file": "ssl/key.pem",
+        "alpns": ["h2", "http/1.1"] // HTTP/2 اولویت دارد
       },
       "next": "h2_server"
     },
@@ -196,8 +206,8 @@ curl -x localhost:8080 http://httpforever.com
       "name": "h2_server",
       "type": "Http2Server",
       "settings": {
-        "host": "api.example.com",       // Host header
-        "path": "/tunnel"                // مسیر تونل
+        "host": "api.example.com", // Host header
+        "path": "/tunnel" // مسیر تونل
       },
       "next": "backend_connector"
     },
@@ -216,6 +226,7 @@ curl -x localhost:8080 http://httpforever.com
 ## تنظیمات پیشرفته ⚙️
 
 ### Multi-Protocol Support
+
 ```json
 {
   "name": "multi_protocol_proxy",
@@ -226,8 +237,8 @@ curl -x localhost:8080 http://httpforever.com
       "settings": {
         "address": "0.0.0.0",
         "port": 443,
-        "nodelay": true,                 // بهبود latency
-        "fastopen": true                 // بهبود اتصال
+        "nodelay": true, // بهبود latency
+        "fastopen": true // بهبود اتصال
       },
       "next": "protocol_detector"
     },
@@ -237,8 +248,8 @@ curl -x localhost:8080 http://httpforever.com
       "settings": {
         "cert-file": "ssl/cert.pem",
         "key-file": "ssl/key.pem",
-        "alpns": ["h2", "http/1.1", "trojan"],  // چند پروتکل
-        "session-ticket": true           // بهبود handshake
+        "alpns": ["h2", "http/1.1", "trojan"], // چند پروتکل
+        "session-ticket": true // بهبود handshake
       },
       "next": "smart_router"
     }
@@ -247,6 +258,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### Connection Pooling
+
 ```json
 {
   "name": "pooled_proxy",
@@ -257,8 +269,8 @@ curl -x localhost:8080 http://httpforever.com
       "settings": {
         "address": "api.backend.com",
         "port": 443,
-        "pool-size": 10,                 // تعداد اتصالات pool
-        "pool-idle-timeout": 300         // timeout pool (ثانیه)
+        "pool-size": 10, // تعداد اتصالات pool
+        "pool-idle-timeout": 300 // timeout pool (ثانیه)
       }
     }
   ]
@@ -266,6 +278,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### IP Range Selection
+
 ```json
 {
   "name": "ip_range_proxy",
@@ -276,7 +289,7 @@ curl -x localhost:8080 http://httpforever.com
       "settings": {
         "address": "target.com",
         "port": 80,
-        "freebind-ip-range": "192.168.1.0/24"  // انتخاب از این محدوده
+        "freebind-ip-range": "192.168.1.0/24" // انتخاب از این محدوده
       }
     }
   ]
@@ -286,6 +299,7 @@ curl -x localhost:8080 http://httpforever.com
 ## انواع گره‌های رایج 📦
 
 ### گره‌های شبکه 🌐
+
 ```json
 // TCP Listener - گوش‌دهنده
 {
@@ -301,7 +315,7 @@ curl -x localhost:8080 http://httpforever.com
 
 // TCP Connector - متصل‌کننده
 {
-  "name": "tcp_out", 
+  "name": "tcp_out",
   "type": "TcpConnector",
   "settings": {
     "address": "target.com",           // آدرس مقصد
@@ -322,11 +336,12 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### گره‌های رمزگذاری 🔒
+
 ```json
-// SSL Server - سرور SSL/TLS  
+// SSL Server - سرور SSL/TLS
 {
   "name": "ssl_term",
-  "type": "OpenSSLServer", 
+  "type": "OpenSSLServer",
   "settings": {
     "cert-file": "ssl/cert.pem",
     "key-file": "ssl/key.pem",
@@ -349,6 +364,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### گره‌های پروتکل 🚀
+
 ```json
 // HTTP/2 Server
 {
@@ -363,7 +379,7 @@ curl -x localhost:8080 http://httpforever.com
 // Reality Server (ضد فیلتر)
 {
   "name": "reality_srv",
-  "type": "RealityServer", 
+  "type": "RealityServer",
   "settings": {
     "dest": "www.google.com:443",      // مقصد واقعی
     "private-key": "server_private_key",
@@ -375,6 +391,7 @@ curl -x localhost:8080 http://httpforever.com
 ## قوانین پیکربندی 📋
 
 ### 1. نام‌گذاری منحصربه‌فرد
+
 ```json
 // ❌ اشتباه - نام تکراری
 {
@@ -394,6 +411,7 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### 2. زنجیره معتبر
+
 ```json
 // ❌ اشتباه - next به گره غیرموجود اشاره دارد
 {
@@ -413,34 +431,38 @@ curl -x localhost:8080 http://httpforever.com
 ```
 
 ### 3. موقعیت گره‌ها
+
 ```json
 // هر گره جایگاه خاصی دارد:
 TcpListener     → HEAD (شروع زنجیره)
-OpenSSLServer   → MIDDLE (وسط زنجیره)  
+OpenSSLServer   → MIDDLE (وسط زنجیره)
 TcpConnector    → TAIL (انتهای زنجیره)
 ```
 
 ## الگوهای کاربردی 🎨
 
 ### الگو 1: Reverse Proxy
+
 ```mermaid
 graph LR
     A[Client] --> B[TcpListener]
-    B --> C[OpenSSLServer] 
+    B --> C[OpenSSLServer]
     C --> D[TcpConnector]
     D --> E[Backend]
 ```
 
-### الگو 2: Forward Proxy  
+### الگو 2: Forward Proxy
+
 ```mermaid
 graph LR
     A[Client] --> B[TcpListener]
     B --> C[OpenSSLClient]
-    C --> D[TcpConnector] 
+    C --> D[TcpConnector]
     D --> E[Internet]
 ```
 
 ### الگو 3: Security Gateway
+
 ```mermaid
 graph LR
     A[External] --> B[RealityServer]
@@ -452,6 +474,7 @@ graph LR
 ## تست و عیب‌یابی 🔧
 
 ### بررسی Syntax JSON
+
 ```bash
 # تست JSON با python
 python3 -m json.tool tunnel.json
@@ -464,6 +487,7 @@ jq . tunnel.json
 ```
 
 ### تست اتصال
+
 ```bash
 # تست پراکسی HTTP
 curl -x localhost:8080 http://httpforever.com
@@ -476,6 +500,7 @@ timeout 10 curl -x localhost:8080 http://httpforever.com
 ```
 
 ### نظارت بر Logs
+
 ```bash
 # مشاهده logs زنده
 tail -f logs/core.log
@@ -490,16 +515,21 @@ grep "connection" logs/network.log | wc -l
 ### مشکلات رایج و حل
 
 #### ❌ خطای "node not found"
+
 ```
 Error: next node 'connector' not found
 ```
+
 **حل**: مطمئن شوید نام در `next` دقیقاً با نام گره موجود یکسان است.
 
 #### ❌ خطای "port in use"
+
 ```
 Error: bind failed: Address already in use
 ```
-**حل**: 
+
+**حل**:
+
 ```bash
 # پیدا کردن process
 sudo lsof -i :8080
@@ -509,10 +539,13 @@ sed -i 's/8080/9090/g' tunnel.json
 ```
 
 #### ❌ خطای SSL Certificate
+
 ```
 Error: SSL certificate not found
 ```
+
 **حل**:
+
 ```bash
 # ایجاد self-signed certificate
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
@@ -521,39 +554,42 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 ## نکات بهینه‌سازی ⚡
 
 ### 1. استفاده از Connection Pool
+
 ```json
 {
   "name": "optimized_connector",
   "type": "TcpConnector",
   "settings": {
-    "pool-size": 20,                   // تعداد اتصالات pool
-    "pool-idle-timeout": 600           // نگهداری اتصالات
+    "pool-size": 20, // تعداد اتصالات pool
+    "pool-idle-timeout": 600 // نگهداری اتصالات
   }
 }
 ```
 
 ### 2. بهبود TCP Performance
+
 ```json
 {
-  "name": "fast_listener", 
+  "name": "fast_listener",
   "type": "TcpListener",
   "settings": {
-    "nodelay": true,                   // کاهش latency
-    "fastopen": true,                  // بهبود اتصال
-    "reuseport": true                  // استفاده مجدد پورت
+    "nodelay": true, // کاهش latency
+    "fastopen": true, // بهبود اتصال
+    "reuseport": true // استفاده مجدد پورت
   }
 }
 ```
 
 ### 3. تنظیمات SSL بهینه
+
 ```json
 {
   "name": "fast_ssl",
   "type": "OpenSSLServer",
   "settings": {
-    "session-ticket": true,            // کش کردن session
-    "session-timeout": 7200,           // timeout طولانی‌تر
-    "cipher-suites": "TLS_AES_256_GCM_SHA384"  // cipher مناسب
+    "session-ticket": true, // کش کردن session
+    "session-timeout": 7200, // timeout طولانی‌تر
+    "cipher-suites": "TLS_AES_256_GCM_SHA384" // cipher مناسب
   }
 }
 ```
@@ -561,6 +597,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 ## تولید خودکار پیکربندی 🤖
 
 ### اسکریپت تولید پراکسی
+
 ```bash
 #!/bin/bash
 # generate-proxy.sh
@@ -582,7 +619,7 @@ cat > proxy-${1:-8080}.json << EOF
     },
     {
       "name": "connector_${2:-httpforever.com}",
-      "type": "TcpConnector", 
+      "type": "TcpConnector",
       "settings": {
         "address": "${2:-httpforever.com}",
         "port": ${3:-80}
@@ -596,17 +633,19 @@ echo "✅ پراکسی ایجاد شد: proxy-${1:-8080}.json"
 ```
 
 ### استفاده از اسکریپت
+
 ```bash
 # پراکسی ساده
 ./generate-proxy.sh 8080 google.com 80
 
-# پراکسی HTTPS  
+# پراکسی HTTPS
 ./generate-proxy.sh 8443 secure.example.com 443
 ```
 
 ## قالب‌های آماده 📋
 
 ### قالب پراکسی ساده
+
 ```json
 {
   "name": "TEMPLATE_simple_proxy",
@@ -615,7 +654,7 @@ echo "✅ پراکسی ایجاد شد: proxy-${1:-8080}.json"
   "nodes": [
     {
       "name": "listener",
-      "type": "TcpListener", 
+      "type": "TcpListener",
       "settings": {
         "address": "0.0.0.0",
         "port": PORT_NUMBER
@@ -635,10 +674,11 @@ echo "✅ پراکسی ایجاد شد: proxy-${1:-8080}.json"
 ```
 
 ### قالب SSL Termination
+
 ```json
 {
   "name": "TEMPLATE_ssl_termination",
-  "author": "YOUR_NAME", 
+  "author": "YOUR_NAME",
   "config-version": 1,
   "nodes": [
     {
@@ -675,6 +715,7 @@ echo "✅ پراکسی ایجاد شد: proxy-${1:-8080}.json"
 ## خلاصه 📋
 
 ### چک‌لیست پیکربندی
+
 - [ ] نام‌گذاری منحصربه‌فرد برای گره‌ها
 - [ ] زنجیره کامل بدون شکستگی
 - [ ] JSON syntax معتبر
@@ -683,6 +724,7 @@ echo "✅ پراکسی ایجاد شد: proxy-${1:-8080}.json"
 - [ ] فایل‌های SSL موجود (در صورت نیاز)
 
 ### نکات طلایی
+
 ```
 ساده شروع کنید = کمتر خطا
 تست مرحله‌ای = عیب‌یابی آسان
@@ -693,11 +735,11 @@ Logs را بخوانید = درک بهتر مشکلات
 
 حالا که تونل‌های خود را می‌توانید بسازید:
 
-1. **[آموزش‌های عملی](../02-tutorials/)** - تونل‌های پیچیده‌تر یاد بگیرید
-2. **[مرجع گره‌ها](../04-reference/)** - تمام گره‌ها را بشناسید  
-3. **[بهینه‌سازی](../05-guides/performance)** - عملکرد را افزایش دهید
-4. **[امنیت](../05-guides/security)** - تونل‌هایتان را امن کنید
+1. **[آموزش‌های عملی](/docs/category/tutorials)** - تونل‌های پیچیده‌تر یاد بگیرید
+2. **[مرجع گره‌ها](/docs/category/node-reference/)** - تمام گره‌ها را بشناسید
+3. **[بهینه‌سازی](../guides/performance)** - عملکرد را افزایش دهید
+4. **[امنیت](../guides/security)** - تونل‌هایتان را امن کنید
 
 **عالی! حالا می‌توانید هر تونلی که می‌خواهید بسازید** 🚇✨
 
-*"بهترین تونل، تونلی است که درست کار کند!"* 💪
+_"بهترین تونل، تونلی است که درست کار کند!"_ 💪

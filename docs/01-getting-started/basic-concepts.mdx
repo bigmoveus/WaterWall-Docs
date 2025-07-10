@@ -9,8 +9,9 @@ WaterWall را از صفر تا صد بیاموزید - به زبان ساده! 
 ## WaterWall چیست؟ 🤔
 
 تصور کنید می‌خواهید آب از یک نقطه به نقطه دیگر منتقل کنید. شما لوله‌های مختلفی دارید:
+
 - لوله فلزی (TCP)
-- لوله پلاستیکی (UDP) 
+- لوله پلاستیکی (UDP)
 - لوله‌های ضد زنگ (TLS)
 - پمپ‌های مختلف (گره‌ها)
 
@@ -18,28 +19,31 @@ WaterWall به شما اجازه می‌دهد این لوله‌ها را **ب�
 
 ## اجزای اصلی 🧱
 
-### 1. گره (Node) 
+### 1. گره (Node)
+
 یک **گره** مثل یک کارگر است که یک کار خاص انجام می‌دهد:
 
 ```
 🎧 TcpListener   = نگهبان که گوش می‌دهد
-🔌 TcpConnector  = کارگر که وصل می‌کند  
+🔌 TcpConnector  = کارگر که وصل می‌کند
 🔒 OpenSSLServer = قفل‌ساز که رمز می‌کند
 ```
 
 ### 2. زنجیره (Chain)
+
 چندین گره که به هم متصل شده‌اند:
 
 ```mermaid
 graph LR
     A[🎧 Listener] --> B[🔒 SSL] --> C[🔌 Connector]
-    
+
     style A fill:#e1f5fe
-    style B fill:#f3e5f5  
+    style B fill:#f3e5f5
     style C fill:#e8f5e8
 ```
 
 ### 3. جریان داده (Data Flow)
+
 داده‌ها مثل آب در لوله حرکت می‌کنند:
 
 - **Upstream**: از کلاینت به سرور ➡️
@@ -50,31 +54,35 @@ graph LR
 بیایید یک **پراکسی HTTP** بسازیم:
 
 ### قدم 1: طراحی
+
 ```
 کلاینت ---> [گوش‌کن] ---> [متصل‌کننده] ---> سرور
 ```
 
 ### قدم 2: انتخاب گره‌ها
+
 - **گوش‌کن**: `TcpListener` (گوش دادن به پورت 8080)
 - **متصل‌کننده**: `TcpConnector` (اتصال به httpforever.com)
 
 ### قدم 3: پیکربندی JSON
+
 ```json
 {
   "name": "simple_proxy",
   "nodes": [
     {
-      "name": "listener",           // نام دلخواه
-      "type": "TcpListener",        // نوع گره
-      "settings": {                 // تنظیمات
+      "name": "listener", // نام دلخواه
+      "type": "TcpListener", // نوع گره
+      "settings": {
+        // تنظیمات
         "address": "0.0.0.0",
         "port": 8080
       },
-      "next": "connector"           // گره بعدی
+      "next": "connector" // گره بعدی
     },
     {
       "name": "connector",
-      "type": "TcpConnector", 
+      "type": "TcpConnector",
       "settings": {
         "address": "httpforever.com",
         "port": 80
@@ -88,22 +96,25 @@ graph LR
 ## انواع گره‌ها 📦
 
 ### گره‌های شبکه (Network) 🌐
+
 ```
 TcpListener      = گوش‌دهنده TCP
-TcpConnector     = متصل‌کننده TCP  
+TcpConnector     = متصل‌کننده TCP
 UdpStatelessSocket = سوکت UDP ساده
 ```
 
 **مثال**: پراکسی ساده
+
 ```json
 {
   "name": "http_listener",
   "type": "TcpListener",
-  "settings": {"address": "0.0.0.0", "port": 8080}
+  "settings": { "address": "0.0.0.0", "port": 8080 }
 }
 ```
 
 ### گره‌های دستگاه (Device) 💾
+
 ```
 TunDevice        = رابط شبکه مجازی
 WireGuardDevice  = VPN WireGuard
@@ -111,9 +122,10 @@ RawSocket        = دسترسی مستقیم به شبکه
 ```
 
 **مثال**: تونل VPN
+
 ```json
 {
-  "name": "vpn_interface", 
+  "name": "vpn_interface",
   "type": "TunDevice",
   "settings": {
     "device-name": "tun0",
@@ -123,6 +135,7 @@ RawSocket        = دسترسی مستقیم به شبکه
 ```
 
 ### گره‌های پروتکل (Protocol) 🔒
+
 ```
 OpenSSLServer    = سرور TLS/SSL
 OpenSSLClient    = کلاینت TLS/SSL
@@ -131,6 +144,7 @@ RealityServer    = سرور Reality (ضد فیلتر)
 ```
 
 **مثال**: رمزگذاری TLS
+
 ```json
 {
   "name": "ssl_server",
@@ -143,8 +157,9 @@ RealityServer    = سرور Reality (ضد فیلتر)
 ```
 
 ### گره‌های پیشرفته (Advanced) ⚡
+
 ```
-HalfDuplexClient = تقسیم کانال‌ها  
+HalfDuplexClient = تقسیم کانال‌ها
 IpManipulator    = دستکاری IP
 IpOverrider      = تغییر آدرس IP
 ```
@@ -152,32 +167,35 @@ IpOverrider      = تغییر آدرس IP
 ## مفاهیم مهم 🔑
 
 ### Context (اطلاعات مشترک)
+
 مثل یک **کارت شناسایی** که بین گره‌ها رد و بدل می‌شود:
 
 ```
 Context = {
   آدرس مبدأ: "192.168.1.100"
-  آدرس مقصد: "httpforever.com"  
+  آدرس مقصد: "httpforever.com"
   پورت: 80
   ...
 }
 ```
 
 ### Balance Groups (تعادل بار)
+
 وقتی چندین گره یکسان دارید، می‌توانید بارشان را تقسیم کنید:
 
 ```json
 {
   "name": "server1",
-  "type": "TcpListener", 
+  "type": "TcpListener",
   "settings": {
     "port": 80,
-    "balance-group": "web_servers"  // گروه مشترک
+    "balance-group": "web_servers" // گروه مشترک
   }
 }
 ```
 
 ### Chain Positions (موقعیت در زنجیره)
+
 ```
 ┌─────────┐    ┌─────────┐    ┌─────────┐
 │  HEAD   │───▶│ MIDDLE  │───▶│  TAIL   │
@@ -186,32 +204,35 @@ Context = {
 ```
 
 - **HEAD**: گره‌هایی که می‌توانند اول باشند (مثل TcpListener)
-- **MIDDLE**: گره‌هایی که در وسط قرار می‌گیرند (مثل OpenSSLServer)  
+- **MIDDLE**: گره‌هایی که در وسط قرار می‌گیرند (مثل OpenSSLServer)
 - **TAIL**: گره‌هایی که در انتها قرار می‌گیرند (مثل TcpConnector)
 
 ## مثال‌های کاربردی 🎨
 
 ### 1. پراکسی HTTPS
+
 ```mermaid
 graph LR
     A[👤 کاربر] --> B[🎧 TcpListener<br/>پورت 443]
-    B --> C[🔒 OpenSSLServer<br/>رمزگشایی]  
+    B --> C[🔒 OpenSSLServer<br/>رمزگشایی]
     C --> D[🔌 TcpConnector<br/>به سرور]
     D --> E[🌐 سرور]
 ```
 
 ### 2. Load Balancer
+
 ```mermaid
 graph TD
     A[👥 کاربران] --> B[🎧 Listener 1]
-    A --> C[🎧 Listener 2] 
+    A --> C[🎧 Listener 2]
     B --> D[🔌 Server 1]
     C --> E[🔌 Server 2]
-    
+
     B -.->|Balance Group| C
 ```
 
 ### 3. VPN Tunnel
+
 ```mermaid
 graph LR
     A[💻 کلاینت] --> B[📡 TunDevice<br/>tun0]
@@ -223,45 +244,53 @@ graph LR
 ## چرا JSON؟ 📝
 
 ### خوانا و ساده
+
 ```json
 // ✅ واضح و قابل فهم
 {
-  "name": "my_proxy", 
+  "name": "my_proxy",
   "type": "TcpListener",
-  "settings": {"port": 8080}
+  "settings": { "port": 8080 }
 }
 ```
 
 ### قابل ویرایش
+
 هر ویرایشگر متنی می‌تواند JSON را ویرایش کند.
 
 ### قابل اشتراک
+
 فایل‌های JSON را راحت می‌توانید کپی و اشتراک بگذارید.
 
 ## ساختار فایل‌ها 📁
 
 ### core.json (تنظیمات اصلی)
+
 ```json
 {
-  "log": {                    // تنظیمات لاگ
+  "log": {
+    // تنظیمات لاگ
     "path": "logs/",
-    "core": {"loglevel": "INFO"}
+    "core": { "loglevel": "INFO" }
   },
-  "misc": {                   // تنظیمات عمومی
-    "workers": 0,             // تعداد thread (0=خودکار)
-    "ram-profile": "client"   // استفاده از RAM
+  "misc": {
+    // تنظیمات عمومی
+    "workers": 0, // تعداد thread (0=خودکار)
+    "ram-profile": "client" // استفاده از RAM
   },
-  "configs": ["proxy.json"]   // فایل‌های پیکربندی
+  "configs": ["proxy.json"] // فایل‌های پیکربندی
 }
 ```
 
 ### proxy.json (پیکربندی تونل)
+
 ```json
 {
-  "name": "my_tunnel",        // نام تونل
-  "author": "من",           // سازنده  
-  "config-version": 1,        // نسخه پیکربندی
-  "nodes": [                  // لیست گره‌ها
+  "name": "my_tunnel", // نام تونل
+  "author": "من", // سازنده
+  "config-version": 1, // نسخه پیکربندی
+  "nodes": [
+    // لیست گره‌ها
     // گره‌ها اینجا
   ]
 }
@@ -270,17 +299,19 @@ graph LR
 ## اشتباهات رایج ❌
 
 ### 1. نام تکراری
+
 ```json
 // ❌ اشتباه
 {"name": "listener", "type": "TcpListener"},
 {"name": "listener", "type": "TcpConnector"}  // نام تکراری!
 
-// ✅ درست  
+// ✅ درست
 {"name": "http_listener", "type": "TcpListener"},
 {"name": "http_connector", "type": "TcpConnector"}
 ```
 
 ### 2. next نامعتبر
+
 ```json
 // ❌ اشتباه
 {"name": "A", "next": "C"}  // C وجود ندارد!
@@ -290,6 +321,7 @@ graph LR
 ```
 
 ### 3. JSON غلط
+
 ```json
 // ❌ اشتباه - کاما اضافی
 {
@@ -299,7 +331,7 @@ graph LR
 
 // ✅ درست
 {
-  "name": "test", 
+  "name": "test",
   "type": "TcpListener"   // بدون کاما
 }
 ```
@@ -307,25 +339,30 @@ graph LR
 ## نکات طلایی ✨
 
 ### 1. شروع ساده
+
 همیشه با ساده‌ترین حالت شروع کنید:
+
 ```json
 // شروع با 2 گره
 Listener ──> Connector
 ```
 
-### 2. تست مرحله‌ای  
+### 2. تست مرحله‌ای
+
 هر بار یک گره اضافه کنید و تست کنید:
+
 ```json
 // مرحله 1: Listener + Connector
-// مرحله 2: Listener + SSL + Connector  
+// مرحله 2: Listener + SSL + Connector
 // مرحله 3: Listener + SSL + HTTP2 + Connector
 ```
 
 ### 3. نام‌گذاری واضح
+
 ```json
 // ✅ نام‌های توصیفی
 "http_listener_port_80"
-"ssl_server_with_cert" 
+"ssl_server_with_cert"
 "backend_connector_api"
 
 // ❌ نام‌های مبهم
@@ -335,11 +372,12 @@ Listener ──> Connector
 ```
 
 ### 4. مستندسازی
+
 ```json
 {
   "name": "production_lb",
   "author": "تیم شبکه",
-  "description": "Load balancer برای سرویس‌های تولید", 
+  "description": "Load balancer برای سرویس‌های تولید",
   "nodes": [...]
 }
 ```
@@ -347,13 +385,15 @@ Listener ──> Connector
 ## تمرین عملی 🏋️
 
 ### تمرین 1: پراکسی HTTP
+
 ```json
 // TODO: یک پراکسی HTTP بسازید که:
 // - روی پورت 3000 گوش کند
 // - به google.com:80 وصل شود
 ```
 
-### تمرین 2: پراکسی HTTPS  
+### تمرین 2: پراکسی HTTPS
+
 ```json
 // TODO: یک پراکسی HTTPS بسازید که:
 // - SSL termination داشته باشد
@@ -363,12 +403,14 @@ Listener ──> Connector
 ## خلاصه 📋
 
 ### WaterWall =
+
 - **گره‌ها**: کارگران مختلف
 - **زنجیره**: اتصال گره‌ها
 - **JSON**: زبان پیکربندی
 - **مدولار**: ترکیب آسان
 
 ### قانون طلایی
+
 ```
 هر گره = یک کار
 هر زنجیره = یک تونل
@@ -380,10 +422,10 @@ Listener ──> Connector
 حالا که مفاهیم پایه را یاد گرفتید:
 
 1. **[تنظیمات Core](core-configuration)** - core.json را شخصی‌سازی کنید
-2. **[پیکربندی تونل](tunnel-configuration)** - تونل‌های پیچیده بسازید  
-3. **[آموزش عملی](../02-tutorials/)** - تونل‌های واقعی راه‌اندازی کنید
-4. **[مرجع گره‌ها](../04-reference/)** - تمام گره‌ها را بشناسید
+2. **[پیکربندی تونل](tunnel-configuration)** - تونل‌های پیچیده بسازید
+3. **[آموزش عملی](/docs/category/tutorials)** - تونل‌های واقعی راه‌اندازی کنید
+4. **[مرجع گره‌ها](/docs/category/node-reference)** - تمام گره‌ها را بشناسید
 
 **تبریک! حالا آماده‌اید برای ساخت تونل‌های قدرتمند** 🚀
 
-*"بهترین راه یادگیری، تمرین است!"* 💪
+_"بهترین راه یادگیری، تمرین است!"_ 💪

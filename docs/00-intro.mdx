@@ -9,18 +9,21 @@ WaterWall یک چارچوب قدرتمند و انعطاف‌پذیر برای �
 ## چرا WaterWall؟
 
 ### 🚀 **سرعت و کارایی**
+
 - **معماری چند Thread**: پردازش همزمان با thread-per-core
 - **Zero-Copy Operations**: کاهش کپی داده‌ها برای حداکثر throughput
 - **Buffer Pool Management**: مدیریت بهینه حافظه
 - **Hardware Acceleration**: استفاده از شتاب سخت‌افزاری برای رمزگذاری
 
 ### 🧩 **مدولار و انعطاف‌پذیر**
+
 - **Node-based Architecture**: ترکیب آسان گره‌ها برای ایجاد پروتکل‌های پیچیده
 - **JSON Configuration**: پیکربندی ساده بدون نیاز به کدنویسی
 - **Hot Reload**: تغییر پیکربندی بدون قطع سرویس
 - **Cross-platform**: پشتیبانی از Linux، Windows، macOS
 
 ### 🔒 **امنیت پیشرفته**
+
 - **Multi-layer Encryption**: رمزگذاری چندلایه
 - **Protocol Obfuscation**: پنهان‌سازی ترافیک
 - **Anti-Censorship**: مقاومت در برابر فیلترینگ
@@ -29,24 +32,28 @@ WaterWall یک چارچوب قدرتمند و انعطاف‌پذیر برای �
 ## ویژگی‌ها و قابلیت‌های کلیدی
 
 ### 🌐 **گره‌های شبکه (Network Nodes)**
+
 - **TcpListener/TcpConnector**: مدیریت اتصالات TCP با قابلیت‌های پیشرفته
 - **UdpStatelessSocket**: پردازش بسته‌های UDP بدون حفظ وضعیت
 - **Load Balancing**: توزیع هوشمند ترافیک بین چندین backend
 - **Freebind**: انتخاب خودکار IP از محدوده CIDR
 
 ### 🖥️ **گره‌های دستگاه (Device Nodes)**
+
 - **TunDevice**: ایجاد interface های مجازی TUN
 - **WireGuardDevice**: پیاده‌سازی کامل پروتکل WireGuard
 - **RawSocket**: دسترسی مستقیم به بسته‌های شبکه
 - **PacketToConnection**: تبدیل packets به connections
 
 ### 🔐 **گره‌های پروتکل (Protocol Nodes)**
+
 - **OpenSSLServer/Client**: رمزگذاری TLS 1.3 با cipher suites مدرن
 - **Http2Server/Client**: پشتیبانی کامل از HTTP/2 و gRPC
 - **RealityServer/Client**: پروتکل Reality برای دور زدن فیلترینگ
 - **TrojanServer/Client**: پروتکل Trojan با مقاومت TLS-in-TLS
 
 ### ⚡ **گره‌های پیشرفته (Advanced Nodes)**
+
 - **HalfDuplexClient/Server**: تقسیم کانال‌های upload/download
 - **IpManipulator**: دستکاری headers و پروتکل‌های IP
 - **IpOverrider**: تغییر آدرس‌های IP source/destination
@@ -55,6 +62,7 @@ WaterWall یک چارچوب قدرتمند و انعطاف‌پذیر برای �
 ### 🎯 **سناریوهای کاربرد**
 
 #### **VPN و تونل‌سازی**
+
 ```mermaid
 graph LR
     A[Client] --> B[TunDevice]
@@ -63,6 +71,7 @@ graph LR
 ```
 
 #### **Load Balancer پیشرفته**
+
 ```mermaid
 graph TD
     A[TcpListener] --> B[OpenSSLServer]
@@ -72,6 +81,7 @@ graph TD
 ```
 
 #### **Security Gateway**
+
 ```mermaid
 graph LR
     A[External] --> B[RealityServer]
@@ -79,43 +89,41 @@ graph LR
     C --> D[Internal]
 ```
 
-
-
 ## مسیر یادگیری 📚
 
-### 1️⃣ **شروع کنید** - [Getting Started](01-getting-started/)
-- [نصب و راه‌اندازی](01-getting-started/installation)
-- [مفاهیم پایه](01-getting-started/basic-concepts) 
-- [شروع سریع](01-getting-started/quick-start)
+### 1️⃣ **شروع کنید**
 
-### 2️⃣ **یاد بگیرید** - [Tutorials](02-tutorials/)
-- [پراکسی ساده](02-tutorials/basic-proxy)
-- [پایان TLS](02-tutorials/ssl-termination)
-- [تونل‌های پیشرفته](02-tutorials/advanced-tunnels/)
+- [نصب و راه‌اندازی](getting-started/installation)
+- [مفاهیم پایه](getting-started/basic-concepts)
+- [شروع سریع](getting-started/quick-start)
 
-### 3️⃣ **پیاده‌سازی کنید** - [Examples](03-examples/)
-- [نمونه‌های ساده](03-examples/simple-examples)
-- [الگوهای پیشرفته](03-examples/advanced-patterns)
+### 2️⃣ **یاد بگیرید**
 
-### 4️⃣ **عمیق شوید** - [Reference](04-reference/)
-- [گره‌های شبکه](04-reference/network-nodes/)
-- [گره‌های دستگاه](04-reference/device-nodes/)
-- [گره‌های پروتکل](04-reference/protocol-nodes/)
+- [پراکسی ساده](tutorials/basic-proxy)
+- [پایان TLS](tutorials/ssl-termination)
 
-### 5️⃣ **مستقر کنید** - [Guides](05-guides/)
-- [استقرار Production](05-guides/deployment)
-- [امنیت](05-guides/security)
-- [بهینه‌سازی](05-guides/performance)
+### 3️⃣ **پیاده‌سازی کنید**
+
+- [نمونه‌های ساده](examples/simple-examples)
+- [الگوهای پیشرفته](examples/advanced-patterns)
+
+### 4️⃣ **مستقر کنید**
+
+- [استقرار Production](guides/deployment)
+- [امنیت](guides/security)
+- [بهینه‌سازی](guides/performance)
 
 ## عملکرد و آمار 📊
 
 ### **Benchmarks**
+
 - **Throughput**: +10 Gbps در hardware مناسب
 - **Latency**: کمتر از 1ms overhead در local network
 - **Memory Usage**: شروع از 250KB (minimal profile)
 - **CPU Efficiency**: استفاده بهینه از CPU cores
 
 ### **مقیاس‌پذیری**
+
 - **Concurrent Connections**: میلیون‌ها اتصال همزمان
 - **Multi-threading**: automatic scaling بر اساس CPU cores
 - **Memory Pooling**: مدیریت بهینه منابع
@@ -124,12 +132,14 @@ graph LR
 ## جامعه و پشتیبانی 🤝
 
 ### **منابع**
+
 - **GitHub**: [radkesvat/WaterWall](https://github.com/radkesvat/WaterWall)
 - **Issues**: گزارش باگ و درخواست ویژگی
 - **Discussions**: بحث و پرسش در جامعه
 - **Documentation**: این مستندات جامع
 
 ### **مشارکت**
+
 - **Open Source**: کاملاً رایگان و open-source
 - **Community Driven**: توسعه با مشارکت جامعه
 - **Cross-platform**: پشتیبانی از تمام platform های اصلی
