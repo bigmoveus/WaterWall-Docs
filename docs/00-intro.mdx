@@ -79,41 +79,7 @@ graph LR
     C --> D[Internal]
 ```
 
-## شروع سریع 🚀
 
-### نصب در 30 ثانیه
-```bash
-# Linux
-wget https://github.com/radkesvat/WaterWall/releases/latest/download/waterwall-linux-amd64.tar.gz
-tar -xzf waterwall-linux-amd64.tar.gz
-sudo cp waterwall /usr/local/bin/
-```
-
-### اولین پیکربندی
-```json
-{
-  "name": "simple_proxy",
-  "nodes": [
-    {
-      "name": "listener",
-      "type": "TcpListener",
-      "settings": {"address": "0.0.0.0", "port": 8080},
-      "next": "connector"
-    },
-    {
-      "name": "connector", 
-      "type": "TcpConnector",
-      "settings": {"address": "httpforever.com", "port": 80}
-    }
-  ]
-}
-```
-
-### اجرا و تست
-```bash
-waterwall core.json
-curl -x localhost:8080 http://httpforever.com
-```
 
 ## مسیر یادگیری 📚
 

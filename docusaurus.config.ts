@@ -8,7 +8,7 @@ const config: Config = {
     experimental_faster: true,
   },
   title: "WaterWall",
-  tagline: "WaterWall tunneling solutions",
+  tagline: 'فریمورک نسل جدید تونلینگ و عبور از فیلترینگ',
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
