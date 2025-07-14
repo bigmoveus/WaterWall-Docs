@@ -85,58 +85,6 @@ sidebar_position: 4
 
 ### نمونه‌های مختلف
 
-#### Development (توسعه)
-
-```json
-{
-  "log": {
-    "path": "logs/",
-    "core": {
-      "loglevel": "DEBUG", // همه جزئیات
-      "file": "core.log",
-      "console": true // نمایش در console
-    },
-    "network": {
-      "loglevel": "DEBUG", // همه اتصالات
-      "file": "network.log",
-      "console": true
-    }
-  }
-}
-```
-
-#### Production (تولید)
-
-```json
-{
-  "log": {
-    "path": "/var/log/waterwall/",
-    "core": {
-      "loglevel": "WARN", // فقط مهم‌ها
-      "file": "core.log",
-      "console": false // بدون console spam
-    },
-    "network": {
-      "loglevel": "ERROR", // فقط خطاهای شبکه
-      "file": "network.log",
-      "console": false
-    }
-  }
-}
-```
-
-#### Silent Mode (حداکثر سرعت)
-
-```json
-{
-  "log": {
-    "core": { "loglevel": "SILENT" }, // بدون log
-    "network": { "loglevel": "SILENT" },
-    "dns": { "loglevel": "SILENT" }
-  }
-}
-```
-
 ## بخش Misc 🔧
 
 ### تنظیمات عمومی

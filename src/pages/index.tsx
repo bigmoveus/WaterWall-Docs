@@ -119,16 +119,16 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/getting-started/quick-start"
+            to="/docs/getting-started/tutorial-part1"
           >
-            شروع سریع در ۵ دقیقه 🚀
+            آموزش کامل 🚀
           </Link>
           <Link
             className="button button--secondary  button--lg"
             to="/docs/intro"
             style={{ marginLeft: "1rem" }}
           >
-            معرفی کامل
+            معرفی پروژه
           </Link>
         </div>
       </div>
@@ -163,11 +163,11 @@ export default function Home(): JSX.Element {
                 مقابله با هر نوع محدودیت ارائه می‌دهد.
               </p>
             </div>
-            <div className="row">
+            {/* <div className="row">
               {AdvancedTunnels.map((props, idx) => (
                 <AdvancedTunnel key={idx} {...props} />
               ))}
-            </div>
+            </div> */}
           </div>
         </section>
       </main>
