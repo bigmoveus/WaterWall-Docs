@@ -73,7 +73,7 @@ const config: Config = {
       title: "WaterWall",
       logo: {
         alt: "WaterWall Logo",
-        src: "img/logo.svg",
+        src: "img/icon.png",
       },
       items: [
         {
@@ -133,11 +133,15 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Waterwall, Inc.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+    },
+    colorMode: {
+      defaultMode: "dark",
+      disableSwitch: false, // Optional: allows users to switch themes
     },
   } satisfies Preset.ThemeConfig,
 };
