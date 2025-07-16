@@ -133,7 +133,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Waterwall, Inc.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Waterwall Project.`,
     },
     prism: {
       theme: prismThemes.github,

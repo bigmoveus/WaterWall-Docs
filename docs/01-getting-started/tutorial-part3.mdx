@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# آموزش بخش سوم 🔧
+# آموزش بخش سوم
 
 ### درک Node و ساخت کانفیگ فایل 📝
 
@@ -215,10 +215,10 @@ flowchart LR;
     user4 --> A1;
 
     subgraph 1.1.1.1;
-        B1[443];
+        B1[TcpConnector 1.1.1.1:443];
         end;
     subgraph my-server;
-        A1[443]   --> B1 ;
+        A1[TcpListener 443]   --> B1 ;
         end;
 ```
 
