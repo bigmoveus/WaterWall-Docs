@@ -336,7 +336,7 @@ flowchart LR;
         "port": 443,
         "nodelay": true
     },
-    "next": "hfc"
+    "next": "output"
 },
 {
     "name": "output",
@@ -609,6 +609,26 @@ flowchart LR;
     "settings": {
         "capture-filter-mode": "source-ip",
         "capture-ip": "IP_KHAREJ"
+    }
+},
+
+{
+    "name": "input",
+    "type": "TcpListener",
+    "settings": {
+        "address": "0.0.0.0",
+        "port": 443,
+        "nodelay": true
+    },
+    "next": "output"
+},
+{
+    "name": "output",
+    "type": "TcpConnector",
+    "settings": {
+        "nodelay": true,
+        "address": "10.10.0.2",
+        "port": 443
     }
 }
 ```
