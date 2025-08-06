@@ -74,14 +74,14 @@ OpenVPN پکت‌ها را مستقیماً از یک tun device دریافت م
 
 ```mermaid
 flowchart LR;
-    TunDevice --> PacketAsData --> SSLClient --> TcpConnector
+    TunDevice --> PacketAsData --> TlsClient --> TcpConnector
 ```
 
 ### 🖥️ **سمت سرور VPN:**
 
 ```mermaid
 flowchart LR;
-    TcpListener --> SSLServer --> DataAsPacket --> TunDevice
+    TcpListener --> TlsServer --> DataAsPacket --> TunDevice
 ```
 
 **💡 نکته:** حتی نیازی به تغییر IP ها هم ندارد. فقط یک کامند تولید NAT از دیتای TunDevice روی VPN Server اجرا می‌شود تا پکت‌ها به بیرون هدایت شوند.
@@ -231,8 +231,6 @@ flowchart LR;
 
 **🔄 protoswap-tcp:** یعنی هر پکتی که از نوع TCP بود را تغییر به آن عددی که گفته شده، و در پکت‌های برگشتی هم هر پکتی از آن عدد بود تغییر می‌کند به TCP.
 
-**🔄 UDP:** شما می‌توانید اگر خواستید UDP هم تغییر دهید (مثلاً WireGuard را تونل کنید)، ولی باید یک نود `IpManipulator` دیگر به زنجیر اضافه کنید با عدد دیگری که با آن قبلی که برای TCP بود یکی نباشد. از protoswap-udp برای اینکار استفاده کنید.
-### 🌐 **نود RawSocket:**
 
 این نود هم می‌تواند دریافت و هم ارسال کند. برای همین در این سناریو هم اگر کل زنجیر را برعکس بچینید، درست کار می‌کند.
 
