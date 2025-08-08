@@ -8,7 +8,7 @@ sidebar_position: 700
 
 | ویژگی              | مقدار                        | توضیح                                              |
 |--------------------|------------------------------|----------------------------------------------------|
-| **نوع نود**        | Tunnel (تک‌جهته)            | فقط از جهت چپ به راست پشتیبانی می‌کند              |
+| **نوع نود**        | Tunnel (تک‌جهته)            | جهت کانکشن ها از چپ شروع و به راست پیش روی می‌کنند              |
 | **لایه شبکه**      | لایه ۴ (Transport Layer)     | کار با کانکشن‌ها، نه پکت‌های خام                   |
 | **جهت پشتیبانی**  | چپ به راست (Left to Right)   | دوجهته نیست، فقط یک‌طرفه                          |
 | **موقعیت در زنجیر**| وسط زنجیر                 | فقط در وسط زنجیر قابل استفاده است               |
@@ -20,13 +20,12 @@ sidebar_position: 700
 ## عملکرد
 
 ```mermaid
-%%{init: {'theme':'dark'}}%%
 flowchart LR
     A[Upload] --> C[HalfDuplexServer]
     B[Download] --> C[HalfDuplexServer]
     C[HalfDuplexServer] --> D[Combined]
     
-    style C fill:#2d2d2d,stroke:#ff6b35,stroke-width:2px,color:#ffffff
+    style C stroke:#ff6b35,stroke-width:2px
     style A fill:transparent,stroke:transparent
     style B fill:transparent,stroke:transparent
     style D fill:transparent,stroke:transparent
