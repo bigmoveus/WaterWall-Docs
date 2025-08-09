@@ -126,23 +126,6 @@ flowchart LR;
     TunDevice --> PacketAsData --> WireGuardDevice --> UdpStateLessSocket
 ```
 
-🤔 **سوال:** شاید برایتان این ساختار یکمی عجیب باشد، بخصوص اینکه سرور ایران شبیه سرور خارج شده است. باید بگویم WireGuard کلاً این‌طوری است!
-
-**🔄 جهت برعکس:** اگر نود ها را برعکس بچینید هم همین سناریو درمی‌آید و درست کار می‌کند:
-
-#### **سمت کلاینت (برعکس):**
-
-```mermaid
-flowchart LR;
-    UdpStateLessSocket --> WireGuardDevice --> DataAsPacket --> TunDevice
-```
-
-#### **سمت سرور VPN (برعکس):**
-
-```mermaid
-flowchart LR;
-    UdpStateLessSocket --> WireGuardDevice --> DataAsPacket --> TunDevice
-```
 
 ### 🔍 **چرا UdpStateLessSocket؟**
 
