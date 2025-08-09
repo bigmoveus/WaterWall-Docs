@@ -9,7 +9,7 @@ const config: Config = {
   },
   title: "WaterWall",
   tagline: 'فریمورک نسل جدید تونلینگ و عبور از فیلترینگ',
-  favicon: "img/favicon.ico",
+  favicon: "img/ficon.ico",
 
   // Set the production url of your site here
   url: "https://radkesvat.github.io",
